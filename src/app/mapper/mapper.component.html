@@ -1,0 +1,5 @@
+<div>
+  <!-- is (input) the event I want? kinda obnoxious to do stuff on every keypress, but then again that means i don't have to blur to compute. or maybe compute after a delay? eeeeeh -->
+  <input type="text" [attr.placeholder]="from" (input)="onFromChange($event.target.value)">
+  <input type="text" [attr.placeholder]="to" [attr.value]="computedToValue">
+</div>

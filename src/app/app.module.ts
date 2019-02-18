@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
+import { MapperComponent } from './mapper/mapper.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MapperComponent
   ],
   imports: [
     BrowserModule,

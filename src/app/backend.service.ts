@@ -16,7 +16,7 @@ export class BackendService {
   constructor(private http: HttpClient) { }
 
   // todo instead of making this silly get/getCached interface, use an observable(??)
-  public getCached() {
+  public getCached(): BookModel[] {
     const cachedData = localStorage.getItem(CACHE_KEY);
     if (cachedData) {
       const res = JSON.parse(cachedData);
@@ -24,7 +24,7 @@ export class BackendService {
     }
   }
 
-  public get() {
+  public get(): Promise<BookModel[]> {
     // Using the same API key as Bookworm! I'll probably integrate these together anyway(?)
     const API_KEY=localStorage.getItem(API_KEY_KEY);
     if (API_KEY) {
@@ -105,12 +105,9 @@ class Parser {
         row2[E],
         row2[F]
       );
-      if (model.isValid()) {
-        ret.push(model)
-      }
+      ret.push(model)
     }
     console.log(ret);
-    window.models = ret;
     return ret;
   }
   // parseRow(row: string[]): Row {
