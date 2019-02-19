@@ -22,10 +22,10 @@ export class AppComponent implements OnInit {
     // todo unlike Bookworm, the user can play with the dom before stuff loads (and when stuff loads their changes get clobbered). fix this!
     // todo backend call should probably time out?
     this.models = this.backendService.getCached();
-    // this.backendService.get().then(x => {
-    //   this.loading = false;
-    //   this.models = x;
-    // });
+    this.backendService.get().then(x => {
+      this.loading = false;
+      this.models = x;
+    });
 
     // window.t = this.timestampService;
   }

@@ -6,6 +6,8 @@
 
 **v0.1.1:** Timestamp support! Definitely not as nice as it could be, but it works! Also lots of awful code lol
 
+**v0.1.2:** Oops I disabled the backend call
+
 ----
 
 Next (features):
