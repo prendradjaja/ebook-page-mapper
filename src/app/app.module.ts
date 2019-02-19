@@ -8,7 +8,7 @@ import { MapperComponent } from './mapper/mapper.component';
 @NgModule({
   declarations: [
     AppComponent,
-    MapperComponent
+    MapperComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from "@angular/common/http";
+import { TimestampService } from './timestamp.service';
 
 const CACHE_KEY = 'bookworm/cached-page-mappings';
 const API_KEY_KEY = 'bookworm/google-api-key';
@@ -51,6 +52,10 @@ export class BookModel {
   private slope: number;
   private intercept: number;
 
+  // use getter instead to prevent mutation?
+  aIsTimestamp = false;
+  bIsTimestamp = false;
+
   constructor(
     public bookTitle: string,
     public formatA: string,
@@ -60,6 +65,17 @@ export class BookModel {
     b1,
     b2,
   ) {
+    // todo not all nans are timestamps. validate that it is a timestamp!!
+    if (isNaN(+a1)) {
+      a1 = strToSec(a1);
+      a2 = strToSec(a2);
+      this.aIsTimestamp = true;
+    }
+    if (isNaN(+b1)) {
+      b1 = strToSec(b1);
+      b2 = strToSec(b2);
+      this.bIsTimestamp = true;
+    }
     this.slope = (b1 - b2) / (a1 - a2);
     this.intercept = b1 - this.slope * a1;
   }
@@ -110,20 +126,61 @@ class Parser {
     console.log(ret);
     return ret;
   }
-  // parseRow(row: string[]): Row {
-    
-
-  //   const ret = new Row();
-  //   ret.createdAt = row[A];
-  //   ret.book = row[B];
-  //   ret.start = row[C];
-  //   ret.end = row[D];
-  //   ret.notes = row[E];
-  //   return ret;
-  // }
 
   private headerEqualsExpected(rows: string[][]): boolean {
     // todo array comparison using lodash or something?
     return JSON.stringify(rows[0]) === JSON.stringify(headers);
   }
+}
+
+// todo rename these or put them in timestampservice or something
+export function secToStr(sec: number): string {
+  return Timestamp.fromSeconds(sec).toString();
+}
+export function strToSec(s: string): number {
+  return new Timestamp(s).getSeconds();
+}
+
+// maybe it makes more sense for the constructor to be the more "primitive" one and to have a method called "parse" or something?
+export class Timestamp {
+  private seconds: number;
+
+  constructor(s: string) {
+    if (s) {
+      const [hours, minutes, seconds] = s.split(':').map(x => +x);
+      this.seconds = 3600 * hours + 60 * minutes + seconds;
+    } else {
+      this.seconds = 0;
+    }
+  }
+  static fromSeconds(seconds: number) {
+    const ret = new Timestamp(null);
+    ret.seconds = seconds;
+    return ret;
+  }
+  toString(): string {
+    const hours = Math.floor(this.seconds / 3600);
+    const rem = this.seconds % 3600;
+    const minutes = Math.floor(rem / 60);
+    const seconds = rem % 60;
+    const minutesStr = twoDigit(minutes);
+    const secondsStr = twoDigit(Math.round(seconds));
+    return `${hours}:${minutesStr}:${secondsStr}`;
+  }
+  mul(scalar: number) {
+    return Timestamp.fromSeconds(this.seconds * scalar);
+  }
+  add(addend: Timestamp) {
+    return Timestamp.fromSeconds(this.seconds + addend.seconds);
+  }
+  div(divisor: number) {
+    return this.mul(1 / divisor);
+  }
+  getSeconds(): number {
+    return this.seconds;
+  }
+}
+
+function twoDigit(n: number) {
+  return n.toString().padStart(2, '0');
 }

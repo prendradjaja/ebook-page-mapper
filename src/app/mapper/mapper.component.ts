@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { BookModel } from '../backend.service';
+import { BookModel, Timestamp, strToSec, secToStr } from '../backend.service';
 
 @Component({
   selector: 'app-mapper',
@@ -25,19 +25,31 @@ export class MapperComponent implements OnInit {
 
   onFromChange(value: string) {
     let valNum = +value;
-    if (isNaN(valNum) || valNum === 0) {
+    if (isNaN(valNum)) {
+      valNum = strToSec(value);
+    }
+
+    if (valNum === 0) {
       this.computedToValue = ''
     } else {
+      let x;
       if (this.aToB) {
-        this.computedToValue = round(this.model.toB(valNum)).toString();
+        x = round(this.model.toB(valNum));
+        if (this.model.bIsTimestamp) {
+          x = secToStr(x);
+        }
       } else {
-        this.computedToValue = round(this.model.toA(valNum)).toString();
+        x = round(this.model.toA(valNum));
+        if (this.model.aIsTimestamp) {
+          x = secToStr(x);
+        }
       }
+      this.computedToValue = x;
     }
   }
 
 }
 
 function round(n) {
-return Math.round(n*10)/10;
+  return Math.round(n * 10) / 10;
 }

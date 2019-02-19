@@ -4,8 +4,10 @@
 
 **In between versions:** Added `deploy.sh`.
 
+**v0.1.1:** Timestamp support! Definitely not as nice as it could be, but it works! Also lots of awful code lol
+
 ----
 
 Next (features):
 
-- [ ] Handle timestamps for audiobooks
+- [x] Handle timestamps for audiobooks
